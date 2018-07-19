@@ -14,7 +14,6 @@ import (
 	"bytes"
 	"errors"
 	"github.com/coreos/etcd/etcdserver/api/snap"
-	"fmt"
 )
 
 const (
