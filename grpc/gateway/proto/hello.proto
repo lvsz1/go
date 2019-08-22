@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package hello;
+
+import "google/api/annotations.proto";
+
+service HelloService {
+    rpc SayHello (HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            get: "/hello/world"
+            //通过 additional_bindings 捆绑多个方法
+            additional_bindings {
+                post: "/hello/world"
+                body: "*"
+            }
+        };
+    }
+
+    //grpc mux 多个handler测试
+    //如果url相同，会执行第一个handler
+    //gateway生成url并注册的顺序按照proto service的顺序,规则可以参考https://github.com/grpc-ecosystem/grpc-gateway/blob/master/runtime/mux.go ServeHTTP函数
+    //也就是说，"/hello/world"会执行SayHello，而不会执行SayHello2
+    rpc SayHello2 (HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            get: "/hello/world"
+            //通过 additional_bindings 捆绑多个方法
+            additional_bindings {
+                post: "/hello/world"
+                body: "*"
+            }
+        };
+    }
+}
+
+message HelloRequest {
+    string greeting = 1;
+}
+
+message HelloResponse {
+    string reply = 1;
+}
